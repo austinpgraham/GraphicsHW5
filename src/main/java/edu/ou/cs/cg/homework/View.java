@@ -12,9 +12,8 @@
 //
 //******************************************************************************
 
-package edu.ou.cs.cg.interaction;
+package edu.ou.cs.cg.homework;
 
-//import java.lang.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
