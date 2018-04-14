@@ -213,9 +213,6 @@ public final class View
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		// Clear the buffer
 		drawBounds(gl);							// Unit bounding box
 		drawAxes(gl);							// X and Y axes
-		drawCursor(gl);							// Crosshairs at mouse location
-		drawCursorCoordinates(drawable);		// Draw some text
-		drawPolyline(gl);						// Draw the user's sketch
 	}
 
 	//**********************************************************************
@@ -245,65 +242,6 @@ public final class View
 
 		gl.glVertex2d(0.0, -10.0);
 		gl.glVertex2d(0.0, 10.0);
-
-		gl.glEnd();
-	}
-
-	private void	drawCursor(GL2 gl)
-	{
-		if (cursor == null)
-			return;
-
-		gl.glBegin(GL.GL_LINE_LOOP);
-		gl.glColor3f(0.5f, 0.5f, 0.5f);
-
-		for (int i=0; i<32; i++)
-		{
-			double	theta = (2.0 * Math.PI) * (i / 32.0);
-
-			gl.glVertex2d(cursor.x + 0.05 * Math.cos(theta),
-						  cursor.y + 0.05 * Math.sin(theta));
-		}
-
-		gl.glEnd();
-	}
-
-	private void	drawCursorCoordinates(GLAutoDrawable drawable)
-	{
-		if (cursor == null)
-			return;
-
-		String	sx = FORMAT.format(new Double(cursor.x));
-		String	sy = FORMAT.format(new Double(cursor.y));
-		String	s = "(" + sx + "," + sy + ")";
-
-		renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
-		renderer.setColor(1.0f, 1.0f, 0, 1.0f);
-		renderer.draw(s, 2, 2);
-		renderer.endRendering();
-	}
-
-	private void	drawPolyline(GL2 gl)
-	{
-		gl.glColor3f(1.0f, 0.0f, 0.0f);
-
-		for (Point2D.Double p : points)
-		{
-			gl.glBegin(GL2.GL_POLYGON);
-
-			gl.glVertex2d(p.x - 0.01, p.y - 0.01);
-			gl.glVertex2d(p.x - 0.01, p.y + 0.01);
-			gl.glVertex2d(p.x + 0.01, p.y + 0.01);
-			gl.glVertex2d(p.x + 0.01, p.y - 0.01);
-
-			gl.glEnd();
-		}
-
-		gl.glColor3f(1.0f, 1.0f, 0.0f);
-		gl.glBegin(GL.GL_LINE_STRIP);
-
-		for (Point2D.Double p : points)
-			gl.glVertex2d(p.x, p.y);
 
 		gl.glEnd();
 	}
