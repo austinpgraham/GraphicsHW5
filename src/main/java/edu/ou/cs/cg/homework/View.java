@@ -211,26 +211,12 @@ public final class View
 		GL2		gl = drawable.getGL().getGL2();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		// Clear the buffer
-		drawBounds(gl);							// Unit bounding box
 		drawAxes(gl);							// X and Y axes
 	}
 
 	//**********************************************************************
 	// Private Methods (Scene)
 	//**********************************************************************
-
-	private void	drawBounds(GL2 gl)
-	{
-		gl.glColor3f(0.1f, 0.1f, 0.1f);
-		gl.glBegin(GL.GL_LINE_LOOP);
-
-		gl.glVertex2d(1.0, 1.0);
-		gl.glVertex2d(-1.0, 1.0);
-		gl.glVertex2d(-1.0, -1.0);
-		gl.glVertex2d(1.0, -1.0);
-
-		gl.glEnd();
-	}
 
 	private void	drawAxes(GL2 gl)
 	{
