@@ -12,7 +12,7 @@
 //
 //******************************************************************************
 
-package edu.ou.cs.cg.interaction;
+package edu.ou.cs.cg.homework;
 
 //import java.lang.*;
 import java.awt.Color;
@@ -135,13 +135,6 @@ public final class Network
 				return COLORS[i];
 
 		return null;
-	}
-
-	public static void	main(String[] argv)
-	{
-		for (int i=0; i<NAMES.length; i++)
-			System.out.println("" + i + ":" + getSides(NAMES[i]) + " -> " +
-							   getColor(NAMES[i]) + " (" + NAMES[i] + ")");
 	}
 }
 

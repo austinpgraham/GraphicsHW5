@@ -65,6 +65,12 @@ public final class View
 	private Point2D.Double				cursor;		// Current cursor coordinates
 	private ArrayList<Point2D.Double>	points;		// User's polyline points
 
+	private String[] names = Network.getAllNames();
+	private int focusString = 0;
+	private Stack<String> usedNames = new Stack<String>();
+	private ArrayList<Polygon> nodes = new ArrayList<Polygon>();
+	private float radius = 0.2f;
+
 	//**********************************************************************
 	// Constructors and Finalizer
 	//**********************************************************************
@@ -146,6 +152,14 @@ public final class View
 		return (Component)canvas;
 	}
 
+	public void cycleString(boolean right)
+	{
+		if(right) this.focusString++;
+		else this.focusString--;
+		if(this.focusString >= this.names.length) this.focusString = 0;
+		else if(this.focusString <= 0) this.focusString = this.names.length - 1;
+	}
+
 	//**********************************************************************
 	// Override Methods (GLEventListener)
 	//**********************************************************************
@@ -176,6 +190,20 @@ public final class View
 	{
 		this.w = w;
 		this.h = h;
+	}
+
+	public void placeName()
+	{
+		String name = this.names[this.focusString];
+		Color color = Network.getColor(name);
+		int sides = Network.getSides(name);
+		float r = (float)color.getRed() / 255f;
+		float g = (float)color.getGreen() / 255f;
+		float b = (float)color.getBlue() / 255f;
+		Polygon p = new Polygon(sides, new Point(0f, 0f), this.radius, 0f, new float[]{r, g, b});
+		this.nodes.add(p);
+		this.usedNames.push(name);
+		this.removeName(name);
 	}
 
 	//**********************************************************************
@@ -212,11 +240,34 @@ public final class View
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		// Clear the buffer
 		drawAxes(gl);							// X and Y axes
+		if(this.names.length > 0)
+		{
+			drawName(drawable);
+		}
+
+		for(Polygon p: this.nodes)
+		{
+			p.draw(gl);
+		}
 	}
 
 	//**********************************************************************
 	// Private Methods (Scene)
 	//**********************************************************************
+
+	private void removeName(String name)
+	{
+		ArrayList<String> newArray = new ArrayList<String>();
+		for(String n: this.names)
+		{
+			if(n != name)
+			{
+				newArray.add(n);
+			}
+		}
+		this.names = new String[newArray.size()];
+		this.names = newArray.toArray(this.names);
+	}
 
 	private void	drawAxes(GL2 gl)
 	{
@@ -230,6 +281,14 @@ public final class View
 		gl.glVertex2d(0.0, 10.0);
 
 		gl.glEnd();
+	}
+
+	private void	drawName(GLAutoDrawable drawable)
+	{
+		renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
+		renderer.setColor(1.0f, 1.0f, 0, 1.0f);
+		renderer.draw(this.names[this.focusString], 2, 2);
+		renderer.endRendering();
 	}
 }
 

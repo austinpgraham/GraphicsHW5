@@ -28,6 +28,9 @@ class Polygon
     // Angle at which to start driving
     private float startAngle;
 
+    // Color to fill if necessary
+    private float[] fillColor = null;
+
     // The center of the polygon
     public Point center;
 
@@ -56,6 +59,37 @@ class Polygon
         {
             p.setVelocity(this.center.getVelocity());
         }
+    }
+
+    /**
+     * Construct polygon instance
+     *
+     * @param numPoints: Number of points in polygon
+     * @param center: Center of the polygon
+     * @param radius: Radius of the polygon
+     * @param startAngle: Angle at which to start drawing
+     * @param fillColor: Color to fill when drawing
+     */
+    public Polygon(int numPoints, Point center, float radius, float startAngle, float[] fillColor)
+    {
+        this.center = center;
+        this.radius = radius;
+        this.startAngle = startAngle;
+
+        // Generate the points in the polygon and
+        // Update the side vectors
+        this.points = this.generatePoints(numPoints, this.center, radius, startAngle);
+        this.sides = this.updateVectors();
+
+        // Set velocity of all points to that 
+        // of the center
+        for(Point p: this.points)
+        {
+            p.setVelocity(this.center.getVelocity());
+        }
+
+        // Set fill color
+        this.fillColor = fillColor;
     }
 
     /**
@@ -108,11 +142,23 @@ class Polygon
         }
         else 
         {
-            // Otherwise, draw all sides
-            for(Vector v: this.sides)
+            if(this.fillColor == null)
             {
-                Utils.drawLine(gl, v.getStartPoint(), v.getEndPoint(), color);
+                // Otherwise, draw all sides
+                for(Vector v: this.sides)
+                {
+                    Utils.drawLine(gl, v.getStartPoint(), v.getEndPoint(), color);
+                }
             }
+            else 
+            {
+                // Get skip amount
+                float inc = 360 / (float)this.sides.size();
+
+                // Draw filled polygon
+                Utils.drawCircle(gl, this.center, this.radius, 0.0, 360.0, inc, color, this.fillColor, true);
+            }
+            
         }
     }
 
@@ -330,6 +376,10 @@ class Polygon
 			Point p = new Point((float)x, (float)y);
 			points[count] = p;
 			count ++;
+            if(count == numPoints)
+            {
+                break;
+            }
 		}
         return points;
     }

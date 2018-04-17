@@ -94,6 +94,22 @@ public final class KeyHandler extends KeyAdapter
 			case KeyEvent.VK_DELETE:
 				view.clear();
 				return;
+			
+			case KeyEvent.VK_COMMA:
+				if(Utilities.isShiftDown(e))
+				{
+					view.cycleString(false);
+				}
+				break;
+			case KeyEvent.VK_PERIOD:
+				if(Utilities.isShiftDown(e))
+				{
+					view.cycleString(true);
+				}
+				break;
+			case KeyEvent.VK_ENTER:
+				this.view.placeName();
+				break;
 		}
 
 		view.setOrigin(p);

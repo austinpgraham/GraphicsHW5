@@ -147,13 +147,13 @@ public class Utils
 	/*
 	 * Overload of the above, allowing for an degree increment to draw polygons
 	 */
-	public static void drawCircle(GL2 gl, Point2D center, float radius, double start, double end, int inc, float[] color, boolean outline)
+	public static void drawCircle(GL2 gl, Point2D center, float radius, double start, double end, float inc, float[] color, float[] fillColor, boolean outline)
 	{
-		final float[] BLACK = new float[]{0f, 0f, 0f};
-		int len = 360 / inc;
+		final float[] BLACK = color;
+		int len = (int)(360 / inc);
 		double[] vert = new double[(len+1)*2];
 		gl.glBegin(GL.GL_TRIANGLE_FAN);
-		gl.glColor3f(color[0], color[1], color[2]);
+		gl.glColor3f(fillColor[0], fillColor[1], fillColor[2]);
 		gl.glVertex2d(center.getX(), center.getY());
 		double centx = center.getX();
 		double centy = center.getY();
