@@ -170,6 +170,24 @@ public final class View
 		this.nodes.setFocused(this.focusPoly);
 	}
 
+	public void removeNode()
+	{
+		if(this.focusPoly == -1)
+		{
+			return;
+		}
+		String removed = this.nodes.remove();
+		if(this.nodes.size() == 0)
+		{
+			this.focusPoly = -1;
+		}
+		else if(this.focusPoly == this.nodes.size())
+		{
+			this.focusPoly--;
+		}
+		this.addName(removed);
+	}
+
 	//**********************************************************************
 	// Override Methods (GLEventListener)
 	//**********************************************************************
@@ -211,9 +229,13 @@ public final class View
 		float g = (float)color.getGreen() / 255f;
 		float b = (float)color.getBlue() / 255f;
 		Polygon p = new Polygon(sides, new Point(0f, 0f), this.radius, 0f, new float[]{r, g, b});
-		this.nodes.addPolygon(p);
+		this.nodes.addPolygon(p, name);
 		this.usedNames.push(name);
 		this.removeName(name);
+		if(this.focusString == this.names.length)
+		{
+			this.cycleString(true);
+		}
 	}
 
 	//**********************************************************************
@@ -272,6 +294,18 @@ public final class View
 				newArray.add(n);
 			}
 		}
+		this.names = new String[newArray.size()];
+		this.names = newArray.toArray(this.names);
+	}
+
+	private void addName(String name)
+	{
+		ArrayList<String> newArray = new ArrayList<String>();
+		for(String n: this.names)
+		{
+			newArray.add(n);
+		}
+		newArray.add(name);
 		this.names = new String[newArray.size()];
 		this.names = newArray.toArray(this.names);
 	}

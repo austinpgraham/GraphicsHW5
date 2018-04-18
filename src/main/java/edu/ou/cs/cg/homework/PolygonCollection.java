@@ -16,6 +16,7 @@ class PolygonCollection
 {
     // List of polygons to keep
     private ArrayList<Polygon> polygons;
+    private ArrayList<String> name;
 
     // Index of the focused polygon
     private int focused = -1;
@@ -26,6 +27,7 @@ class PolygonCollection
     public PolygonCollection()
     {
         this.polygons = new ArrayList<Polygon>();
+        this.name = new ArrayList<String>();
     }
 
     /**
@@ -33,9 +35,10 @@ class PolygonCollection
      * 
      * @param p: A Polygon object
      */
-    public void addPolygon(Polygon p)
+    public void addPolygon(Polygon p, String name)
     {
         this.polygons.add(p);
+        this.name.add(name);
         this.focused = this.polygons.size() - 1;
     }
 
@@ -77,6 +80,17 @@ class PolygonCollection
     public int getFocused()
     {
         return this.focused;
+    }
+
+    public String remove()
+    {
+        this.polygons.remove(this.focused);
+        String s = this.name.remove(this.focused);
+        if(this.focused == this.polygons.size())
+        {
+            this.focused --;
+        }
+        return s;
     }
 
     public int size()

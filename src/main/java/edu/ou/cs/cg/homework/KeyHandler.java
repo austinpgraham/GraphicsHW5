@@ -91,9 +91,9 @@ public final class KeyHandler extends KeyAdapter
 			case KeyEvent.VK_NUMPAD9:
 				p.x += a;	p.y += a;	break;
 
-			case KeyEvent.VK_DELETE:
-				view.clear();
-				return;
+			case KeyEvent.VK_BACK_SPACE:
+				view.removeNode();
+				break;
 			
 			case KeyEvent.VK_COMMA:
 				if(Utilities.isShiftDown(e))
