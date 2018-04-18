@@ -100,11 +100,19 @@ public final class KeyHandler extends KeyAdapter
 				{
 					view.cycleString(false);
 				}
+				else 
+				{
+					this.view.cyclePolygon(false);
+				}
 				break;
 			case KeyEvent.VK_PERIOD:
 				if(Utilities.isShiftDown(e))
 				{
 					view.cycleString(true);
+				}
+				else
+				{
+					this.view.cyclePolygon(true);
 				}
 				break;
 			case KeyEvent.VK_ENTER:

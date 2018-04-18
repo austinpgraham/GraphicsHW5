@@ -4,6 +4,9 @@
 package edu.ou.cs.cg.homework;
 
 import java.util.ArrayList;
+import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
+import javax.media.opengl.glu.*;
 
 /**
  * Keeps a collection of Polygon objects to 
@@ -15,7 +18,7 @@ class PolygonCollection
     private ArrayList<Polygon> polygons;
 
     // Index of the focused polygon
-    private int focused = 0;
+    private int focused = -1;
 
     /**
      * Construct an empty collection
@@ -33,6 +36,7 @@ class PolygonCollection
     public void addPolygon(Polygon p)
     {
         this.polygons.add(p);
+        this.focused = this.polygons.size() - 1;
     }
 
     /**
@@ -73,5 +77,27 @@ class PolygonCollection
     public int getFocused()
     {
         return this.focused;
+    }
+
+    public int size()
+    {
+        return this.polygons.size();
+    }
+
+    public void draw(GL2 gl)
+    {
+        final float[] WHITE = {1.0f, 1.0f, 1.0f};
+        final float[] GRAY = {169f/255f,169f/255f,169f/255f};
+        for(int i = 0; i < this.size(); i++)
+        {
+            if(i != this.focused)
+            {
+                this.polygons.get(i).draw(gl, GRAY);
+            }
+        }
+        if(this.focused != -1)
+        {
+            this.polygons.get(this.focused).draw(gl, WHITE);
+        }
     }
 }

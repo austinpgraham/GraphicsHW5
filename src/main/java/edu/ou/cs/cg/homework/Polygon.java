@@ -129,6 +129,39 @@ class Polygon
     /**
      * Draw the polygon
      */
+    public void draw(GL2 gl, float[] color)
+    {
+        // If there is only one side, we have
+        // a point, so draw the center
+        if(this.sides.size() <= 1)
+        {
+            this.center.draw(gl);
+        }
+        else 
+        {
+            if(this.fillColor == null)
+            {
+                // Otherwise, draw all sides
+                for(Vector v: this.sides)
+                {
+                    Utils.drawLine(gl, v.getStartPoint(), v.getEndPoint(), color);
+                }
+            }
+            else 
+            {
+                // Get skip amount
+                float inc = 360 / (float)this.sides.size();
+
+                // Draw filled polygon
+                Utils.drawCircle(gl, this.center, this.radius, 0.0, 360.0, inc, color, this.fillColor, true);
+            }
+            
+        }
+    }
+
+    /**
+     * Draw the polygon
+     */
     public void draw(GL2 gl)
     {
         // Set the color to white

@@ -67,8 +67,9 @@ public final class View
 
 	private String[] names = Network.getAllNames();
 	private int focusString = 0;
+	private int focusPoly = 0;
 	private Stack<String> usedNames = new Stack<String>();
-	private ArrayList<Polygon> nodes = new ArrayList<Polygon>();
+	private PolygonCollection nodes = new PolygonCollection();
 	private float radius = 0.2f;
 
 	//**********************************************************************
@@ -160,6 +161,15 @@ public final class View
 		else if(this.focusString <= 0) this.focusString = this.names.length - 1;
 	}
 
+	public void cyclePolygon(boolean right)
+	{
+		if(right) this.focusPoly++;
+		else this.focusPoly--;
+		if(this.focusPoly >= this.nodes.size()) this.focusPoly = -1;
+		else if(this.focusPoly < -1) this.focusPoly = this.nodes.size() - 1;
+		this.nodes.setFocused(this.focusPoly);
+	}
+
 	//**********************************************************************
 	// Override Methods (GLEventListener)
 	//**********************************************************************
@@ -201,7 +211,7 @@ public final class View
 		float g = (float)color.getGreen() / 255f;
 		float b = (float)color.getBlue() / 255f;
 		Polygon p = new Polygon(sides, new Point(0f, 0f), this.radius, 0f, new float[]{r, g, b});
-		this.nodes.add(p);
+		this.nodes.addPolygon(p);
 		this.usedNames.push(name);
 		this.removeName(name);
 	}
@@ -245,10 +255,7 @@ public final class View
 			drawName(drawable);
 		}
 
-		for(Polygon p: this.nodes)
-		{
-			p.draw(gl);
-		}
+		this.nodes.draw(gl);
 	}
 
 	//**********************************************************************
