@@ -101,7 +101,7 @@ class PolygonCollection
     public void draw(GL2 gl)
     {
         final float[] WHITE = {1.0f, 1.0f, 1.0f};
-        final float[] GRAY = {169f/255f,169f/255f,169f/255f};
+        final float[] GRAY = {150f/255f,150f/255f,150f/255f};
         for(int i = 0; i < this.size(); i++)
         {
             if(i != this.focused)
@@ -113,5 +113,17 @@ class PolygonCollection
         {
             this.polygons.get(this.focused).draw(gl, WHITE);
         }
+    }
+
+    public int contains(Point m)
+    {
+        for(int i = 0; i < this.polygons.size(); i++)
+        {
+            if(this.polygons.get(i).contains(m))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }

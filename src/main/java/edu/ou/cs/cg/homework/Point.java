@@ -150,6 +150,12 @@ public class Point extends Point2D.Float
         return vel_vec;
     }
 
+    public void translate(float dx, float dy)
+    {
+        this.x += dx;
+        this.y += dy;
+    }
+
     /**
      * Subtract one point from another
      *

@@ -220,6 +220,21 @@ class Polygon
         this.center = center;
     }
 
+    public void move(float dx, float dy)
+    {
+        this.center.translate(dx, dy);
+        for(Point p: this.points)
+        {
+            p.translate(dx, dy);
+        }
+    }
+
+    public void scale(float amount)
+    {
+        this.radius *= amount;
+        this.points = this.generatePoints(this.points.length, this.center, this.radius, this.startAngle);
+    }
+
     /**
      * Increase the area of the polygon 
      * by some amount
@@ -263,6 +278,12 @@ class Polygon
     public float getRadius()
     {
         return this.radius;
+    }
+
+    public boolean contains(Point m)
+    {
+        float dist = new Vector(this.center, m).getMagnitude();
+        return dist <= this.radius;
     }
 
     /**
@@ -404,15 +425,12 @@ class Polygon
 		int count = 0;
 		for(float i = startAngle; i < FULL_CIRC + startAngle; i+= skipDegree)
 		{
+            if(count >= numPoints) break;
 			double x =  center.getFloatX() + Math.cos(Math.toRadians(i))*RADIUS;
 			double y = center.getFloatY() + Math.sin(Math.toRadians(i))*RADIUS;
 			Point p = new Point((float)x, (float)y);
 			points[count] = p;
 			count ++;
-            if(count == numPoints)
-            {
-                break;
-            }
 		}
         return points;
     }

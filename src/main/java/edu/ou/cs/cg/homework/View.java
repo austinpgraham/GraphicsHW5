@@ -70,7 +70,7 @@ public final class View
 	private int focusPoly = 0;
 	private Stack<String> usedNames = new Stack<String>();
 	private PolygonCollection nodes = new PolygonCollection();
-	private float radius = 0.2f;
+	private float radius = 0.05f;
 
 	//**********************************************************************
 	// Constructors and Finalizer
@@ -88,7 +88,7 @@ public final class View
 		// Initialize rendering
 		canvas.addGLEventListener(this);
 		animator = new FPSAnimator(canvas, DEFAULT_FRAMES_PER_SECOND);
-		//animator.start();
+		animator.start();
 
 		// Initialize interaction
 		keyHandler = new KeyHandler(this);
@@ -188,6 +188,72 @@ public final class View
 		this.addName(removed);
 	}
 
+	public void translateUp()
+	{
+		int idx = this.nodes.getFocused();
+		if(idx != -1)
+		{
+			Polygon p = this.nodes.getFocusedPolygon();
+			float amount = p.getRadius() * 2f * 0.1f;
+			p.move(0, amount);
+		}
+	}
+
+	public void translateDown()
+	{
+		int idx = this.nodes.getFocused();
+		if(idx != -1)
+		{
+			Polygon p = this.nodes.getFocusedPolygon();
+			float amount = p.getRadius() * 2f * 0.1f;
+			p.move(0, -amount);
+		}
+	}
+
+	public void translateRight()
+	{
+		int idx = this.nodes.getFocused();
+		if(idx != -1)
+		{
+			Polygon p = this.nodes.getFocusedPolygon();
+			float amount = p.getRadius() * 2f * 0.1f;
+			p.move(amount, 0);
+		}
+	}
+
+	public void translateLeft()
+	{
+		int idx = this.nodes.getFocused();
+		if(idx != -1)
+		{
+			Polygon p = this.nodes.getFocusedPolygon();
+			float amount = p.getRadius() * 2f * 0.1f;
+			p.move(-amount, 0);
+		}
+	}
+
+	public void scaleUp()
+	{
+		int idx = this.nodes.getFocused();
+		if(idx != -1)
+		{
+			Polygon p = this.nodes.getFocusedPolygon();
+			float amount = 2f * 1.1f;
+			p.scale(amount);
+		}
+	}
+
+	public void scaleDown()
+	{
+		int idx = this.nodes.getFocused();
+		if(idx != -1)
+		{
+			Polygon p = this.nodes.getFocusedPolygon();
+			float amount = 1f / (2f * 1.1f);
+			p.scale(amount);
+		}
+	}
+
 	//**********************************************************************
 	// Override Methods (GLEventListener)
 	//**********************************************************************
@@ -220,6 +286,26 @@ public final class View
 		this.h = h;
 	}
 
+	public void selectPolygon(Point m)
+	{
+		int f = this.nodes.contains(m);
+		if(f != -1)
+		{
+			this.nodes.setFocused(f);
+			this.focusPoly = f;
+		}
+	}
+
+	public Polygon getSelected()
+	{
+		return this.nodes.getFocusedPolygon();
+	}
+
+	public boolean contains(Point m)
+	{
+		return this.nodes.contains(m) != -1;
+	}
+
 	public void placeName()
 	{
 		String name = this.names[this.focusString];
@@ -228,7 +314,10 @@ public final class View
 		float r = (float)color.getRed() / 255f;
 		float g = (float)color.getGreen() / 255f;
 		float b = (float)color.getBlue() / 255f;
-		Polygon p = new Polygon(sides, new Point(0f, 0f), this.radius, 0f, new float[]{r, g, b});
+		Random rand = new Random();
+		float x = rand.nextFloat() - 0.5f;
+		float y = rand.nextFloat() - 0.5f;
+		Polygon p = new Polygon(sides, new Point(x, y), this.radius, 0f, new float[]{r, g, b});
 		this.nodes.addPolygon(p, name);
 		this.usedNames.push(name);
 		this.removeName(name);

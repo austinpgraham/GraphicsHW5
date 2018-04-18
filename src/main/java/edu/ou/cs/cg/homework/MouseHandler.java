@@ -39,6 +39,8 @@ public final class MouseHandler extends MouseAdapter
 
 	private Stack<Point> transforms;
 
+	private int action = -1;
+
 	//**********************************************************************
 	// Constructors and Finalizer
 	//**********************************************************************
@@ -60,6 +62,11 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mouseClicked(MouseEvent e)
 	{
+		Point pointer = calcCoordinatesInView(e.getX(), e.getY());
+		Point2D.Double o = view.getOrigin();
+		pointer.setFloatX(pointer.getFloatX() + (float)o.getX());
+		pointer.setFloatY(pointer.getFloatY() + (float)o.getY());
+		this.view.selectPolygon(pointer);
 	}
 
 	public void		mouseEntered(MouseEvent e)
@@ -73,13 +80,24 @@ public final class MouseHandler extends MouseAdapter
 	public void		mousePressed(MouseEvent e)
 	{
 		transforms = new Stack<Point>();
-		Point pointer = calcCoordinatesInView(e.getX(), e.getY());
-		transforms.push(pointer);
+		Point current = calcCoordinatesInView(e.getX(), e.getY());
+		Point2D.Double o = view.getOrigin();
+		current.translate((float)o.getX(), (float)o.getY());
+		if(!view.contains(current))
+		{
+			current.translate((float)-o.getX(), (float)-o.getY());
+			transforms.push(current);
+			this.action = 0;
+		}
+		else if(!Utilities.isShiftDown(e))
+		{
+			this.action = 1;
+		}
 	}
 
 	public void		mouseReleased(MouseEvent e)
 	{
-		
+		this.action = -1;	
 	}
 
 	//**********************************************************************
@@ -90,11 +108,24 @@ public final class MouseHandler extends MouseAdapter
 	{
 		Point2D.Double origin = this.view.getOrigin();
 		Point current = calcCoordinatesInView(e.getX(), e.getY());
-		Point last = transforms.peek();
-		Vector transVect = Point.subtract(current, last);
-		Point new_origin = new Point((float)origin.getX() - transVect.x, (float)origin.getY() - transVect.y);
-		this.view.setOrigin(new Point2D.Double(new_origin.getX(), new_origin.getY()));
-		transforms.push(current);
+		if(this.action == 0)
+		{
+			Point last = transforms.peek();
+			Vector transVect = Point.subtract(last, current);
+			Point new_origin = new Point((float)origin.getX() - transVect.x, (float)origin.getY() - transVect.y);
+			this.view.setOrigin(new Point2D.Double(new_origin.getX(), new_origin.getY()));
+			transforms.push(current);
+		}
+		else if(this.action == 1)
+		{
+			Point2D.Double o = view.getOrigin();
+			current.setFloatX(current.getFloatX() + (float)o.getX());
+			current.setFloatY(current.getFloatY() + (float)o.getY());
+			Polygon focused = view.getSelected();
+			Point center = focused.center;
+			Vector movement = Point.subtract(center, current);
+			focused.move(movement.x, movement.y);
+		}
 	}
 
 	public void		mouseMoved(MouseEvent e)
@@ -121,7 +152,7 @@ public final class MouseHandler extends MouseAdapter
 		double			vx = (sx * 2.0) / w - 1.0;
 		double			vy = (sy * 2.0) / h - 1.0;
 
-		return new Point((float)-vx, (float)vy);
+		return new Point((float)vx, (float)-vy);
 	}
 }
 
