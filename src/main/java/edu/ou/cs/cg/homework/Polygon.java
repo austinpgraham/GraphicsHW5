@@ -220,6 +220,12 @@ class Polygon
         this.center = center;
     }
 
+    /*
+     * Move all points within the polygon
+     * 
+     * @param dx: x move amount
+     * @param dy: y move amount
+     */
     public void move(float dx, float dy)
     {
         this.center.translate(dx, dy);
@@ -229,6 +235,11 @@ class Polygon
         }
     }
 
+    /*
+     * Rotate the polygon by theta
+     *
+     * @param theta: Angle to rotate
+     */
     public void rotate(double theta)
     {
         for(Point p: this.points)
@@ -238,6 +249,11 @@ class Polygon
         this.updateVectors();
     }
 
+    /*
+     * Scale the polygon by a certain amount
+     * 
+     * @param amount: Amount to scale
+     */
     public void scale(float amount)
     {
         this.radius *= amount;
@@ -289,6 +305,11 @@ class Polygon
         return this.radius;
     }
 
+    /*
+     * Ask if a polygon contains a point
+     * 
+     * @param m: Point to query
+     */
     public boolean contains(Point m)
     {
         float dist = new Vector(this.center, m).getMagnitude();

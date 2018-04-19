@@ -151,17 +151,27 @@ public class Point extends Point2D.Float
         return vel_vec;
     }
 
+    /*
+     * Translate the point
+     * 
+     * @param dx: translate in x direction
+     * @param dy: translate in y direction
+     */
     public void translate(float dx, float dy)
     {
         this.x += dx;
         this.y += dy;
     }
 
+    /*
+     * Rotate a point a certain angle
+     * 
+     * @param theta: angle to rotate
+     */
     public void rotate(double theta)
     {
         double newx = this.x * Math.cos(theta) - this.y * Math.sin(theta);
         double newy = this.x * Math.sin(theta) + this.y * Math.cos(theta);
-        //if(Double.isNaN(newx) || Double.isNaN(newy)) return;
         this.x = (float)newx;
         this.y = (float)newy;
     }
@@ -179,10 +189,5 @@ public class Point extends Point2D.Float
         float x = two.getFloatX() - one.getFloatX();
         float y = two.getFloatY() - one.getFloatY();
         return new Vector(x, y);
-    }
-
-    public String toString()
-    {
-        return this.x + " " + this.y;
     }
 }

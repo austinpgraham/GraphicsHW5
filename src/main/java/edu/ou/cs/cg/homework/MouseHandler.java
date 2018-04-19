@@ -1,7 +1,7 @@
 //******************************************************************************
 // Copyright (C) 2016 University of Oklahoma Board of Trustees.
 //******************************************************************************
-// Last modified: Mon Feb 29 23:46:15 2016 by Chris Weaver
+// Last modified: Thursday April 18 12:43:15 2016 by Austin Graham
 //******************************************************************************
 // Major Modification History:
 //
@@ -14,7 +14,6 @@
 
 package edu.ou.cs.cg.homework;
 
-//import java.lang.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -37,8 +36,11 @@ public final class MouseHandler extends MouseAdapter
 	// State (internal) variables
 	private final View	view;
 
+	// Keep track of transforms
 	private Stack<Point> transforms;
 
+	// Denote the action based on the 
+	// click and movement patterns
 	private int action = -1;
 
 	//**********************************************************************
@@ -62,6 +64,9 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mouseClicked(MouseEvent e)
 	{
+		// Get the canvas coordinate where clicked 
+		// transform to origin and select the correct 
+		// polygon
 		Point pointer = calcCoordinatesInView(e.getX(), e.getY());
 		Point2D.Double o = view.getOrigin();
 		pointer.setFloatX(pointer.getFloatX() + (float)o.getX());
@@ -79,20 +84,29 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mousePressed(MouseEvent e)
 	{
+		// When pressed, create new transform list
 		transforms = new Stack<Point>();
+
+		// Translate the click point
 		Point current = calcCoordinatesInView(e.getX(), e.getY());
 		Point2D.Double o = view.getOrigin();
 		current.translate((float)o.getX(), (float)o.getY());
+
+		// If clicked outside and shift is not down, pan
+		// the entire view
 		if(!view.contains(current) && !Utilities.isShiftDown(e))
 		{
 			current.translate((float)-o.getX(), (float)-o.getY());
 			transforms.push(current);
 			this.action = 0;
 		}
+		// Otherwise if shift isnt down and we click 
+		// in a polygon, translate the polygon
 		else if(!Utilities.isShiftDown(e))
 		{
 			this.action = 1;
 		}
+		// Otherwise we rotate
 		else
 		{
 			transforms.push(current);
@@ -102,6 +116,7 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mouseReleased(MouseEvent e)
 	{
+		// Reset the action
 		this.action = -1;	
 	}
 
@@ -111,10 +126,14 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mouseDragged(MouseEvent e)
 	{
+		// Translate the mouse position
 		Point2D.Double origin = this.view.getOrigin();
 		Point current = calcCoordinatesInView(e.getX(), e.getY());
 		if(this.action == 0)
 		{
+			// Look at the last point and translate
+			// The origin of the view using the vector
+			// between current position and the previous
 			Point last = transforms.peek();
 			Vector transVect = Point.subtract(last, current);
 			Point new_origin = new Point((float)origin.getX() - transVect.x, (float)origin.getY() - transVect.y);
@@ -123,6 +142,8 @@ public final class MouseHandler extends MouseAdapter
 		}
 		else if(this.action == 1)
 		{
+			// Do the same translation as above,
+			// but only on a single polygon
 			Point2D.Double o = view.getOrigin();
 			current.setFloatX(current.getFloatX() + (float)o.getX());
 			current.setFloatY(current.getFloatY() + (float)o.getY());
@@ -133,24 +154,30 @@ public final class MouseHandler extends MouseAdapter
 		}
 		else if(this.action == 2)
 		{
-			Point2D.Double o = view.getOrigin();
-			current.translate((float)o.getX(), (float)o.getY());
-			//if(transforms.size() % 3 == 0)
-			//{
-				Polygon focused = view.getSelected();
-				Point center = focused.center;
-				// transforms.pop();
-				// transforms.pop();
-				Point previous = transforms.peek();
-				Vector v1 = Point.subtract(center, current);
-				Vector v2 = Point.subtract(center, previous);
-				float costheta = Vector.dot(v1, v2) / (v1.getMagnitude() * v2.getMagnitude());
-				if(costheta != 1.0)
-				{
-					double arccos = Math.acos(costheta);
-					focused.rotate(arccos);
-				}
-			//}
+			// Get the origin
+			Point o = new Point((float)view.getOrigin().getX(), (float)view.getOrigin().getY());
+			current.translate(-(float)o.getX(), -(float)o.getY());
+			// Get the polygon and save the center
+			Polygon focused = view.getSelected();
+			Point center = new Point(focused.center.getFloatX(), focused.center.getFloatY());
+			// Translate to the global origin
+			focused.move(-center.getFloatX(), -center.getFloatY());
+			// Use the vectors between current click point and the 
+			// last to get the angle to rotate
+			Point previous = transforms.peek();
+			Vector v1 = Point.subtract(center, current);
+			Vector v2 = Point.subtract(center, previous);
+			float costheta = Vector.dot(v1, v2) / (v1.getMagnitude() * v2.getMagnitude());
+			// If the cos is 1, we get NaN and bad
+			// things happen. This means it is small therefore
+			// there should be essentially no movement
+			if(costheta != 1.0)
+			{
+				double arccos = Math.acos(costheta);
+				focused.rotate(arccos);
+			}
+			// Move the polygon back
+			focused.move(center.getFloatX(), center.getFloatY());
 			transforms.push(current);
 		}
 	}
@@ -175,7 +202,6 @@ public final class MouseHandler extends MouseAdapter
 	{
 		int				w = view.getWidth();
 		int				h = view.getHeight();
-		Point2D.Double	p = view.getOrigin();
 		double			vx = (sx * 2.0) / w - 1.0;
 		double			vy = (sy * 2.0) / h - 1.0;
 

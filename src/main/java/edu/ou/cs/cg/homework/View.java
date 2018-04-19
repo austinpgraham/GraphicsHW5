@@ -153,6 +153,10 @@ public final class View
 		return (Component)canvas;
 	}
 
+	/*
+	 * Cycle through the strings at the
+	 * bottom left
+	 */
 	public void cycleString(boolean right)
 	{
 		if(right) this.focusString++;
@@ -161,6 +165,9 @@ public final class View
 		else if(this.focusString <= 0) this.focusString = this.names.length - 1;
 	}
 
+	/*
+	 * Cycle through the polygons
+	 */
 	public void cyclePolygon(boolean right)
 	{
 		if(right) this.focusPoly++;
@@ -170,6 +177,10 @@ public final class View
 		this.nodes.setFocused(this.focusPoly);
 	}
 
+	/*
+	 * Remvoe a polygon if 
+	 * there is currently one selected.
+	 */
 	public void removeNode()
 	{
 		if(this.focusPoly == -1)
@@ -188,6 +199,9 @@ public final class View
 		this.addName(removed);
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	/// Translate selected polygon in designated direction
+	//////////////////////////////////////////////////////////////////////
 	public void translateUp()
 	{
 		int idx = this.nodes.getFocused();
@@ -232,6 +246,9 @@ public final class View
 		}
 	}
 
+	/////////////////////////////////////////////////////////////
+	/// Scale a polygon is designated direction
+	/////////////////////////////////////////////////////////////
 	public void scaleUp()
 	{
 		int idx = this.nodes.getFocused();
@@ -286,6 +303,9 @@ public final class View
 		this.h = h;
 	}
 
+	/*
+	 * Select a polygon based on a click point
+	 */
 	public void selectPolygon(Point m)
 	{
 		int f = this.nodes.contains(m);
@@ -296,16 +316,27 @@ public final class View
 		}
 	}
 
+	/*
+	 * Get the currently selected polygon
+	 */
 	public Polygon getSelected()
 	{
 		return this.nodes.getFocusedPolygon();
 	}
 
+	/*
+	 * Return if any polygons currently
+	 * drawn are selected
+	 */
 	public boolean contains(Point m)
 	{
 		return this.nodes.contains(m) != -1;
 	}
 
+	/*
+	 * Place a name as a polygon onto the 
+	 * canvas and remove from the available list
+	 */
 	public void placeName()
 	{
 		String name = this.names[this.focusString];

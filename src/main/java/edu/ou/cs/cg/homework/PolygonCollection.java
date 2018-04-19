@@ -16,13 +16,15 @@ class PolygonCollection
 {
     // List of polygons to keep
     private ArrayList<Polygon> polygons;
+
+    // Hull container
     private ArrayList<Point> hull = new ArrayList<Point>();
+
+    // Name associated with each polygon
     private ArrayList<String> name;
 
     // Index of the focused polygon
     private int focused = -1;
-
-    private boolean reset = true;
 
     /**
      * Construct an empty collection
@@ -43,7 +45,6 @@ class PolygonCollection
         this.polygons.add(p);
         this.name.add(name);
         this.focused = this.polygons.size() - 1;
-        this.reset = true;
     }
 
     /**
@@ -86,6 +87,11 @@ class PolygonCollection
         return this.focused;
     }
 
+    /*
+     * Remove currently selected polygon
+     *
+     * @return Name associated with removed polygon
+     */
     public String remove()
     {
         this.polygons.remove(this.focused);
@@ -94,15 +100,22 @@ class PolygonCollection
         {
             this.focused --;
         }
-        this.reset = true;
         return s;
     }
 
+    /*
+     * Get number of polygons in collection
+     */
     public int size()
     {
         return this.polygons.size();
     }
 
+    /*
+     * Draw this polygon collection
+     * 
+     * @param gl: the GL context
+     */
     public void draw(GL2 gl)
     {
         final float[] WHITE = {1.0f, 1.0f, 1.0f};
@@ -120,9 +133,17 @@ class PolygonCollection
         }
     }
 
+    /*
+     * Ask if any polygons contain
+     * this point
+     * 
+     * @param m: Point to query
+     * 
+     * @return Index of containing polygon if any
+     */
     public int contains(Point m)
     {
-        for(int i = 0; i < this.polygons.size(); i++)
+        for(int i = this.polygons.size() - 1; i >= 0; i--)
         {
             if(this.polygons.get(i).contains(m))
             {
@@ -132,6 +153,15 @@ class PolygonCollection
         return -1;
     }
 
+    /*
+     * Calculate if the points are in a counter clockwise formation
+     * 
+     * @param p: Edge point
+     * @param q: Next point
+     * @param r: Collection point
+     * 
+     * @return if the points go counter clockwise
+     */
     private boolean ccw(Point p, Point q, Point r)
     {
         double val = (q.getY() - p.getY()) * (r.getX() - q.getX()) - (q.getX() - p.getX()) * (r.getY() - q.getY());
@@ -143,9 +173,17 @@ class PolygonCollection
         return true;
     }
 
+    /*
+     * Get the convex hull for this polygon collection
+     * 
+     * @return the list of points on the null
+     */
     public ArrayList<Point> getHull()
     {
         this.hull = new ArrayList<Point>();
+
+        // If collection less than three, add 
+        // known points and terminate
         if(this.polygons.size() < 3)
         {
             for(Polygon p: this.polygons)
@@ -170,9 +208,16 @@ class PolygonCollection
         int q;
         do
         {
+            // If trying to add polygon I've seen before, exit
             if(this.hull.contains(this.polygons.get(p).center)) break;
+
+            // Add next polygon
             this.hull.add(this.polygons.get(p).center);
+
+            // Get next polygon index
             q = (p+1) % this.polygons.size();
+
+            // Find next polygon that is most ccw
             for(int i = 0; i < this.polygons.size(); i++)
             {
                 Point pc = this.polygons.get(p).center;
@@ -185,7 +230,10 @@ class PolygonCollection
                 }
             }
             p=q;
+        // Exit when we end up where we started
         }while(p != leftMost);
+
+        // Return the hull
         return this.hull;
     }
 }

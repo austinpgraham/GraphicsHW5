@@ -1,7 +1,7 @@
 //******************************************************************************
 // Copyright (C) 2016 University of Oklahoma Board of Trustees.
 //******************************************************************************
-// Last modified: Mon Feb 29 23:36:04 2016 by Chris Weaver
+// Last modified: Mon April 19 12:36:04 2018 by Austin Graham
 //******************************************************************************
 // Major Modification History:
 //
@@ -63,6 +63,9 @@ public final class KeyHandler extends KeyAdapter
 			case KeyEvent.VK_NUMPAD5:
 				p.x = 0.0;	p.y = 0.0;	break;
 
+			// For each arrow key, translate
+			// the selected polygon in the proper
+			// direction
 			case KeyEvent.VK_NUMPAD4:
 			case KeyEvent.VK_LEFT:
 				if(!Utilities.isShiftDown(e))
@@ -123,10 +126,14 @@ public final class KeyHandler extends KeyAdapter
 			case KeyEvent.VK_NUMPAD9:
 				p.x += a;	p.y += a;	break;
 
+			// Mac does not have delete key,
+			// use back space to remove selected node
 			case KeyEvent.VK_BACK_SPACE:
 				view.removeNode();
 				break;
 			
+			// Comma and period cycle objects, names 
+			// if shift is down left and right respectively
 			case KeyEvent.VK_COMMA:
 				if(Utilities.isShiftDown(e))
 				{
@@ -147,6 +154,7 @@ public final class KeyHandler extends KeyAdapter
 					this.view.cyclePolygon(true);
 				}
 				break;
+			// Place name on enter
 			case KeyEvent.VK_ENTER:
 				this.view.placeName();
 				break;
