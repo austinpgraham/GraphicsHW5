@@ -153,7 +153,7 @@ class Polygon
                 float inc = 360 / (float)this.sides.size();
 
                 // Draw filled polygon
-                Utils.drawCircle(gl, this.center, this.radius, 0.0, 360.0, inc, color, this.fillColor, true);
+                Utils.drawCircle(gl, this.center, this.radius, 0.0, 360.0, inc, color, this.fillColor, true, this.points);
             }
             
         }
@@ -187,9 +187,9 @@ class Polygon
             {
                 // Get skip amount
                 float inc = 360 / (float)this.sides.size();
-
+                
                 // Draw filled polygon
-                Utils.drawCircle(gl, this.center, this.radius, 0.0, 360.0, inc, color, this.fillColor, true);
+                Utils.drawCircle(gl, this.center, this.radius, 0.0, 360.0, inc, color, this.fillColor, true, this.points);
             }
             
         }
@@ -227,6 +227,15 @@ class Polygon
         {
             p.translate(dx, dy);
         }
+    }
+
+    public void rotate(double theta)
+    {
+        for(Point p: this.points)
+        {
+            p.rotate(theta);
+        }
+        this.updateVectors();
     }
 
     public void scale(float amount)

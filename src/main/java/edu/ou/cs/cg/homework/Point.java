@@ -7,6 +7,7 @@
  */
 package edu.ou.cs.cg.homework;
 
+import java.lang.*;
 import java.util.Random;
 import java.awt.geom.Point2D;
 import javax.media.opengl.*;
@@ -156,6 +157,15 @@ public class Point extends Point2D.Float
         this.y += dy;
     }
 
+    public void rotate(double theta)
+    {
+        double newx = this.x * Math.cos(theta) - this.y * Math.sin(theta);
+        double newy = this.x * Math.sin(theta) + this.y * Math.cos(theta);
+        //if(Double.isNaN(newx) || Double.isNaN(newy)) return;
+        this.x = (float)newx;
+        this.y = (float)newy;
+    }
+
     /**
      * Subtract one point from another
      *
@@ -169,5 +179,10 @@ public class Point extends Point2D.Float
         float x = two.getFloatX() - one.getFloatX();
         float y = two.getFloatY() - one.getFloatY();
         return new Vector(x, y);
+    }
+
+    public String toString()
+    {
+        return this.x + " " + this.y;
     }
 }

@@ -147,6 +147,33 @@ public class Utils
 	/*
 	 * Overload of the above, allowing for an degree increment to draw polygons
 	 */
+	public static void drawCircle(GL2 gl, Point2D center, float radius, double start, double end, float inc, float[] color, float[] fillColor, boolean outline, Point[] points)
+	{
+		final float[] BLACK = color;
+		gl.glBegin(GL.GL_TRIANGLE_FAN);
+		gl.glColor3f(fillColor[0], fillColor[1], fillColor[2]);
+		gl.glVertex2d(center.getX(), center.getY());
+		for(int i = 0, j = 0; i < points.length * 2; j++, i+=2)
+		{
+			double x = points[j].getX();
+			double y = points[j].getY();
+			gl.glVertex2d(x,y);
+		}
+		gl.glVertex2d(points[0].getX(), points[0].getY());
+		gl.glEnd();
+		if(outline)
+		{
+			for(int i = 0; i < points.length-1; i++)
+			{
+				Utils.drawLine(gl, points[i], points[i+1], BLACK);
+			}
+			Utils.drawLine(gl, points[points.length - 1], points[0], BLACK);
+		}
+	}
+
+	/*
+	 * Overload of the above, allowing for an degree increment to draw polygons
+	 */
 	public static void drawCircle(GL2 gl, Point2D center, float radius, double start, double end, float inc, float[] color, float[] fillColor, boolean outline)
 	{
 		final float[] BLACK = color;

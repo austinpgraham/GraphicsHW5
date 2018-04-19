@@ -83,7 +83,7 @@ public final class MouseHandler extends MouseAdapter
 		Point current = calcCoordinatesInView(e.getX(), e.getY());
 		Point2D.Double o = view.getOrigin();
 		current.translate((float)o.getX(), (float)o.getY());
-		if(!view.contains(current))
+		if(!view.contains(current) && !Utilities.isShiftDown(e))
 		{
 			current.translate((float)-o.getX(), (float)-o.getY());
 			transforms.push(current);
@@ -92,6 +92,11 @@ public final class MouseHandler extends MouseAdapter
 		else if(!Utilities.isShiftDown(e))
 		{
 			this.action = 1;
+		}
+		else
+		{
+			transforms.push(current);
+			this.action = 2;
 		}
 	}
 
@@ -125,6 +130,28 @@ public final class MouseHandler extends MouseAdapter
 			Point center = focused.center;
 			Vector movement = Point.subtract(center, current);
 			focused.move(movement.x, movement.y);
+		}
+		else if(this.action == 2)
+		{
+			Point2D.Double o = view.getOrigin();
+			current.translate((float)o.getX(), (float)o.getY());
+			//if(transforms.size() % 3 == 0)
+			//{
+				Polygon focused = view.getSelected();
+				Point center = focused.center;
+				// transforms.pop();
+				// transforms.pop();
+				Point previous = transforms.peek();
+				Vector v1 = Point.subtract(center, current);
+				Vector v2 = Point.subtract(center, previous);
+				float costheta = Vector.dot(v1, v2) / (v1.getMagnitude() * v2.getMagnitude());
+				if(costheta != 1.0)
+				{
+					double arccos = Math.acos(costheta);
+					focused.rotate(arccos);
+				}
+			//}
+			transforms.push(current);
 		}
 	}
 

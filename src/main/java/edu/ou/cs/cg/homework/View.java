@@ -361,6 +361,11 @@ public final class View
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		// Clear the buffer
 		drawAxes(gl);							// X and Y axes
+		ArrayList<Point> hull = this.nodes.getHull();
+		if(hull.size() > 1)
+		{
+			this.drawHull(gl, hull);
+		}
 		if(this.names.length > 0)
 		{
 			drawName(drawable);
@@ -419,6 +424,24 @@ public final class View
 		renderer.setColor(1.0f, 1.0f, 0, 1.0f);
 		renderer.draw(this.names[this.focusString], 2, 2);
 		renderer.endRendering();
+	}
+
+	private void drawHull(GL2 gl, ArrayList<Point> hull)
+	{
+		gl.glBegin(GL2.GL_POLYGON);
+		gl.glColor3f(1.0f, 0.0f, 0.0f);
+		for(Point p: hull)
+		{
+			gl.glVertex2d(p.getX(), p.getY());
+		}
+		gl.glEnd();
+		gl.glBegin(GL2.GL_LINE_LOOP);
+		gl.glColor3f(1.0f, 1.0f, 1.0f);
+		for(Point p: hull)
+		{
+			gl.glVertex2d(p.getX(), p.getY());
+		}
+		gl.glEnd();
 	}
 }
 
